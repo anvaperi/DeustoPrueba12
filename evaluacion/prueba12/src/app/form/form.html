@@ -1,0 +1,36 @@
+<p>form works!</p>
+<form [formGroup]="newArticleForm" (ngSubmit)="onSubmit()">
+  <fieldset>
+    <legend>Nuevo artículo</legend>
+    <div><label for="id">Id</label><input type="number" formControlName="id" id="id" /></div>
+    <div><label for="name">Nombre</label><input type="text" formControlName="name" id="name" /></div>
+    <div>
+      <label for="portionQuantity">Porción</label><input type="number" formControlName="portionQuantity" id="portionQuantity" />
+      <span>
+        <fieldset name="portionUnit">
+          <input type="radio" id="g" formControlName="portionUnit" value="g" /><label for="g">g</label>
+          <input type="radio" id="ml" formControlName="portionUnit" value="ml" /><label for="ml">ml</label>
+        </fieldset>
+      </span>
+    </div>
+    <div><label for="category">Categoría</label>
+      <select id="category" formControlName="category" (change)="onCategoryChange($event)">
+        @for(category of categories; track category) {
+          <option [value]="category">{{ category }}</option>
+        }
+      </select>
+    </div>
+    <div><label for="stockUnits">Disponible</label><input type="number" formControlName="stockUnits" id="stockUnits" /><span>Unidades</span></div>
+    <div><label for="temperature_Celsius">Temperatura</label><input type="number" formControlName="temperature_Celsius" id="temperature_Celsius" /><span>°C</span></div>
+    <div><label for="preparation_min">Preparación</label><input type="number" formControlName="preparation_min" id="preparation_min" /><span>min</span></div>
+    <div>
+      <fieldset><legend>Aptitud</legend>
+        <div><input type="checkbox" formControlName="vegan_friendly" id="vegan_friendly" /><label for="vegan_friendly">Vegano</label></div>
+        <div><input type="checkbox" formControlName="underage_friendly" id="underage_friendly" /><label for="underage_friendly">Infantil</label></div>
+        <div><input type="checkbox" formControlName="celiac_friendly" id="celiac_friendly" /><label for="celiac_friendly">Celíaco</label></div>
+      </fieldset>
+    </div>
+    <div><label for="price_euros_cents">Precio</label><input type="number" formControlName="price_euros_cents" id="price_euros_cents" /><span>€</span></div>
+  </fieldset>
+  <button type="submit">Guardar</button>
+</form>

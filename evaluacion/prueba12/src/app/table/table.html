@@ -1,0 +1,32 @@
+<h2>Detalles de artículos</h2>
+<table>
+  <thead>
+    <tr>
+      <td>
+        <input
+          type="checkbox"
+        />
+      </td>
+      @for(column of propertyNames; track column) {
+        <th>{{ column }}</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for(row of articles; track row) {
+      <tr>
+        <td>
+          <input
+            type="checkbox"
+            [id]="row.id"
+          />
+        </td>
+        @for(column of properties; track column) {
+          <td>{{ row[column] }}</td>
+        }
+      </tr>
+    }
+  </tbody>
+</table>
+<button id="delete">Borrar</button>
+<button id="edit">Editar</button>
