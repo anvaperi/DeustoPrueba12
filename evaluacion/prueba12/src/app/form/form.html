@@ -2,7 +2,7 @@
 <form [formGroup]="newArticleForm" (ngSubmit)="onSubmit()">
   <fieldset>
     <legend>Nuevo artículo</legend>
-    <div><label for="id">Id</label><input type="number" formControlName="id" id="id" /></div>
+    <div><label for="id">Id</label><input type="number" formControlName="id" id="id" [readonly]="true" /></div>
     <div><label for="name">Nombre</label><input type="text" formControlName="name" id="name" /></div>
     <div>
       <label for="portionQuantity">Porción</label><input type="number" formControlName="portionQuantity" id="portionQuantity" />
@@ -15,7 +15,7 @@
     </div>
     <div><label for="category">Categoría</label>
       <select id="category" formControlName="category" (change)="onCategoryChange($event)">
-        @for(category of categories; track category) {
+        @for(category of getCategories(); track category) {
           <option [value]="category">{{ category }}</option>
         }
       </select>

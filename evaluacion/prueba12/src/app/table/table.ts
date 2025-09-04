@@ -1,36 +1,92 @@
-import { Component, OnInit } from '@angular/core';
-import { ArticlesService } from '../articles.service';
+import { afterRenderEffect, Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ArticlesService, Article } from '../articles.service';
+//xxx import { CategoriesService } from '../categories.service';
+import { OrphanCleanerService } from '../orphan-cleaner.service';
+
+type SelectableArticle = Article & { selected: boolean };
 
 @Component({
   selector: 'app-table',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './table.html',
   styleUrl: './table.css'
 })
 export class Table implements OnInit {
-  selectAll: Boolean = false;
-  articles: Array<any> = [];
-  properties: Array<string> = [];
-  propertyNames: Array<string> = [];
+  articles: SelectableArticle[] = [];
 
-  constructor(private articlesService: ArticlesService) {}
+  constructor(
+    private router: Router,
+    private articlesService: ArticlesService,
+//xxx    private categoriesService: CategoriesService,
+    private orphanCleanerService: OrphanCleanerService,
+  ) { }
 
   ngOnInit(): void {
-    this.articles = this.articlesService.getArticles();
-    this.properties = this.articlesService.getArticleProperties();
-    this.propertyNames = this.articlesService.getArticlePropertyNames();
+    //xxx this.articlesService.addArticles();
+    this.articlesService.getArticles().forEach(article => {
+      this.articles.push({ ...article, selected: false });
+    });
   }
 
-  getStock() {
-    let totalStock: number = 0;
-    this.articles.forEach(article => totalStock += article.stock);
-    return totalStock;
+  getRawArticles() {
+    return this.articlesService.getArticles();
   }
 
-  updateArticles(event: { id: number; property: string; value: any }): void {
-    this.articlesService.setArticleProperty(event.id, event.property, event.value);
+  getArticleProperties(): (keyof Article)[] {
+    return this.articlesService.getArticleProperties();
   }
 
+  onAllCheckBoxesChange(event: any): void {
+    const checked = event.target.checked;
+    this.articles.forEach(article => (article.selected = checked));
+  }
 
+  onCheckboxChange(checkboxId: number, event: any): void {
+    const afectedArticle = this.articles.find(article => article.id === checkboxId);
+    if (afectedArticle) { afectedArticle.selected = event.target.checked; }
+  }
+
+  isAllSelected(): boolean {
+    return this.articles.length > 0 && this.articles.every(article => article.selected);
+  }
+
+  isNoneSelected(): boolean {
+    return this.articles.every(article => !article.selected);
+  }
+
+  isOnlyOneSelected(): boolean {
+    return this.articles.filter(article => article.selected).length === 1;
+  }
+
+  deleteSelectedArticles(): void {
+    const articlesToDelete = this.articles.filter(article => article.selected);
+    const categoriesToCheck = new Set<string>();
+    const afectedIndices: number[] = [];
+
+    articlesToDelete.forEach(article => {
+      categoriesToCheck.add(article.category);
+      this.articlesService.removeArticle(article.id);
+      afectedIndices.push(this.articles.findIndex(eachArticle => eachArticle.id === article.id));
+    });
+
+    afectedIndices.reverse().forEach(index => this.articles.splice(index, 1));
+
+    categoriesToCheck.forEach(category => {
+      this.orphanCleanerService.removeOrphanCategory(category);
+    });
+  }
+
+  editSelectedArticle(): void {
+    const selected = this.articles.find(article => article.selected);
+    if (selected) {
+      this.router.navigate(['/form', selected.id]);
+    } else { console.error('Ningún artículo selecionado para editar! '); }
+  }
+
+  createNewArticle(): void {
+    this.router.navigate(['/form']);
+  }
 }

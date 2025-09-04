@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ArticlesService } from '../articles.service';
+import { CategoriesService } from '../categories.service';
+import { OrphanCleanerService } from '../orphan-cleaner.service';
 
 @Component({
   selector: 'app-form',
@@ -10,25 +13,25 @@ import { ArticlesService } from '../articles.service';
   styleUrl: './form.css'
 })
 export class Form implements OnInit {
-  categories: Array<string> = [];
   previousCategory: string | null = null;
   newArticleForm!: FormGroup;
 
   constructor(
+    private route: ActivatedRoute,
     private newArticleFormBuilder: FormBuilder,
     private articlesService: ArticlesService,
+    private categoriesService: CategoriesService,
+    private orphanCleanerService: OrphanCleanerService,
   ) { }
 
 
   ngOnInit(): void {
-    this.categories = this.articlesService.getCategories();
-
     this.newArticleForm = this.newArticleFormBuilder.group({
-      id: [this.getNextAvailableId()],
+      id: [this.getLowestAvailableId(), Validators.required],
       name: ['', Validators.required],
       portionQuantity: [1, Validators.required],
-      portionUnit: ['ml'],
-      category: [null],
+      portionUnit: ['g', Validators.required],
+      category: [null, Validators.required],
       stockUnits: [0],
       temperature_Celsius: [0],
       preparation_min: [0],
@@ -37,16 +40,25 @@ export class Form implements OnInit {
       celiac_friendly: [false],
       price_euros_cents: [0]
     });
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id !== null) {
+      const article = this.articlesService.getArticles().find(article => article.id === +id);
+      if (article) { this.newArticleForm.patchValue(article); }
+    }
 
     this.newArticleForm.get('category')?.valueChanges.subscribe(newCategory => {
       if (this.previousCategory) {
-        this.articlesService.removeOrphanCategory(this.previousCategory);
+        this.orphanCleanerService.removeOrphanCategory(this.previousCategory);
       }
       this.previousCategory = newCategory;
     });
   }
 
-  getNextAvailableId(): number {
+  getCategories(): string[] {
+    return this.categoriesService.getCategories()
+  }
+
+  getLowestAvailableId(): number {
     const ids: Array<number> = this.articlesService.getArticles().map(article => article.id).sort((a, b) => a - b);
     const idslen: number = ids.length;
     let idcursor = 0;
@@ -54,7 +66,7 @@ export class Form implements OnInit {
     return idcursor;
   }
 
-  onCategoryChange(event: Event) {
+  onCategoryChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     if (select.value === 'Nueva Categoría') {
       const newCat = prompt('Introduce el nombre de la nueva categoría:');
@@ -62,18 +74,14 @@ export class Form implements OnInit {
         this.newArticleForm.patchValue({ category: null });
         return;
       }
-      if (this.categories.includes(newCat)) {
-        this.newArticleForm.patchValue({ category: newCat });
-        return;
+      if (!this.categoriesService.categories.includes(newCat)) {
+        this.categoriesService.addCategory(newCat);
       }
-      this.articlesService.addCategory(newCat);
-      this.categories = this.articlesService.getCategories();
       this.newArticleForm.patchValue({ category: newCat });
-
     }
   }
 
-  onSubmit(){
+  onSubmit() {
     this.articlesService.articles.push(this.newArticleForm.value);
     console.log(this.newArticleForm.value);
   }

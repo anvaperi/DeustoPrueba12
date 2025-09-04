@@ -2,14 +2,26 @@
 <table>
   <thead>
     <tr>
-      <td>
+      <th>
         <input
           type="checkbox"
+          [checked]="isAllSelected()"
+          [indeterminate]="!isAllSelected() && !isNoneSelected()"
+          (change)="onAllCheckBoxesChange($event)"
         />
-      </td>
-      @for(column of propertyNames; track column) {
-        <th>{{ column }}</th>
-      }
+      </th>
+      <th>Id</th>
+      <th>Nombre</th>
+      <th>Porción</th>
+      <th>Unidades</th>
+      <th>Categoría</th>
+      <th>Disponibles</th>
+      <th>Temperatura (°C)</th>
+      <th>Preparación (min)</th>
+      <th>Vegano</th>
+      <th>Infantil</th>
+      <th>Celíaco</th>
+      <th>Precio (€)</th>
     </tr>
   </thead>
   <tbody>
@@ -18,15 +30,17 @@
         <td>
           <input
             type="checkbox"
-            [id]="row.id"
+            [checked]="row.selected"
+            (change)="onCheckboxChange(row.id, $event)"
           />
         </td>
-        @for(column of properties; track column) {
+        @for(column of getArticleProperties(); track column) {
           <td>{{ row[column] }}</td>
         }
       </tr>
     }
   </tbody>
 </table>
-<button id="delete">Borrar</button>
-<button id="edit">Editar</button>
+<button (click)="deleteSelectedArticles()" [disabled]="isNoneSelected()" id="delete">Borrar{{ isAllSelected()? ' todos': '' }}</button>
+<button (click)="editSelectedArticle()" [disabled]="!isOnlyOneSelected()" id="edit">Editar</button>
+<button (click)="createNewArticle()">Nuevo artículo</button>
