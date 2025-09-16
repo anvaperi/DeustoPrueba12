@@ -37,19 +37,15 @@ export class ArticlesService {
       { id: 14, name: 'Falafel (pieza)', portionQuantity: 60, portionUnit: 'g', category: 'Snack', stockUnits: 10, temperature_Celsius: 65, preparation_min: 7, vegan_friendly: true, underage_friendly: true, celiac_friendly: true, price_euros_cents: 150 },
       { id: 15, name: 'Bebida alcohólica', portionQuantity: 330, portionUnit: 'ml', category: 'Alcoholic beverage ', stockUnits: 25, temperature_Celsius: 5, preparation_min: 0, vegan_friendly: true, underage_friendly: false, celiac_friendly: true, price_euros_cents: 300 },
     ];
-  constructor() { }
+  constructor() {}
 
   getArticleProperties(): (keyof Article)[] {
     return this.articles.length > 0 ? Object.keys(this.articles[0]) as (keyof Article)[] : [];
   }
 
-  getArticles(): Article[] {
-    return this.articles;
-  }
+  getArticles(): Article[] { return this.articles; }
 
-  addArticles(newArticles: Article[]): void {
-    this.articles.push(...newArticles);
-  }
+  addArticles(newArticles: Article[]): void { this.articles.push(...newArticles); }
 
   removeArticle(id: number): void {
     const index = this.articles.findIndex((such) => such.id === id);
@@ -74,7 +70,8 @@ export class ArticlesService {
     const currentValue = article[property as keyof typeof article];
     if (typeof currentValue !== typeof value) {
       console.warn(
-        `Type mismatch: property '${property}' is of type ${typeof currentValue}, but got ${typeof value}`
+        `Type mismatch: property '${property}' is of type ${typeof currentValue},
+        but got ${typeof value}`
       );
     }
 

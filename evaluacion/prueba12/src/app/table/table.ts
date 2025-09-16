@@ -2,7 +2,6 @@ import { afterRenderEffect, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ArticlesService, Article } from '../articles.service';
-//xxx import { CategoriesService } from '../categories.service';
 import { OrphanCleanerService } from '../orphan-cleaner.service';
 
 type SelectableArticle = Article & { selected: boolean };
@@ -20,20 +19,16 @@ export class Table implements OnInit {
   constructor(
     private router: Router,
     private articlesService: ArticlesService,
-//xxx    private categoriesService: CategoriesService,
     private orphanCleanerService: OrphanCleanerService,
   ) { }
 
   ngOnInit(): void {
-    //xxx this.articlesService.addArticles();
     this.articlesService.getArticles().forEach(article => {
       this.articles.push({ ...article, selected: false });
     });
   }
 
-  getRawArticles() {
-    return this.articlesService.getArticles();
-  }
+  getRawArticles() { return this.articlesService.getArticles(); }
 
   getArticleProperties(): (keyof Article)[] {
     return this.articlesService.getArticleProperties();
@@ -86,7 +81,5 @@ export class Table implements OnInit {
     } else { console.error('Ningún artículo selecionado para editar! '); }
   }
 
-  createNewArticle(): void {
-    this.router.navigate(['/form']);
-  }
+  createNewArticle(): void { this.router.navigate(['/form']); }
 }
