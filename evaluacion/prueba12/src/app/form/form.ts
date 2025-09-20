@@ -60,6 +60,10 @@ export class Form implements OnInit {
     });
   }
 
+  toggleSelection() {
+    const current = this.newArticleForm.get('portionUnit')?.value;
+    this.newArticleForm.get('portionUnit')?.setValue(current === 'g' ? 'ml' : 'g');
+  }
 
   onPriceInput(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -118,9 +122,8 @@ export class Form implements OnInit {
 
   onSubmit() {
     if (this.newArticleForm.valid) {
-      const newArticle: Article = this.newArticleForm.value;
-      this.articlesService.articles.push(newArticle);
-      console.log(newArticle);
+      const newArticle: Article = this.newArticleForm.value as Article;
+      this.articlesService.setArticle(newArticle);
       this.router.navigate(['/table']);
     } else {
       console.log('El formulario no es válido. No se puede guardar.');

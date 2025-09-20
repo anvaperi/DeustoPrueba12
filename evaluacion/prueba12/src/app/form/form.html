@@ -1,4 +1,4 @@
-<p>form works!</p>
+<h2>Introduzca los datos del artículo</h2>
 <form [formGroup]="newArticleForm" (ngSubmit)="onSubmit()">
   <fieldset>
     <legend>Nuevo artículo</legend>
@@ -6,8 +6,8 @@
       <label for="id">Id</label><input type="number" formControlName="id" id="id" [readonly]="true" />
       @if (id?.invalid && (id?.dirty || id?.touched)) {
         <div class="alert alert-danger">
-          @if (id?.hasError('required')) { <div>El id se requiere</div> }
-          @if (id?.hasError('min')) { <div>El id no puede ser negativo.</div> }
+          @if (id?.hasError('required')) { <div class="invalid">El id se requiere</div> }
+          @if (id?.hasError('min')) { <div class="invalid">El id no puede ser negativo.</div> }
         </div>
       }
     </div>
@@ -15,23 +15,20 @@
       <label for="name">Nombre</label><input type="text" class="form-control" formControlName="name" id="name" />
       @if (name?.invalid && (name?.dirty || name?.touched)) {
         <div class="alert alert-danger">
-          @if (name?.hasError('required')) { <div>El nombre se requiere</div> }
-          @if (name?.hasError('minlength')) { <div>El nombre debe contener al menos dos caracteres</div> }
+          @if (name?.hasError('required')) { <div class="invalid">El nombre se requiere</div> }
+          @if (name?.hasError('minlength')) { <div class="invalid">El nombre debe contener al menos dos caracteres</div> }
         </div>
       }
     </div>
     <div>
       <label for="portionQuantity">Porción</label><input type="number" formControlName="portionQuantity" id="portionQuantity" />
-      <span>
-        <fieldset name="portionUnit">
-          <input type="radio" id="g" formControlName="portionUnit" value="g" /><label for="g">g</label>
-          <input type="radio" id="ml" formControlName="portionUnit" value="ml" /><label for="ml">ml</label>
-        </fieldset>
-      </span>
+      <fieldset class="toggle-container">
+        <button type="button" class="unit" (click)="toggleSelection()">{{ newArticleForm.get('portionUnit')?.value }}</button>
+      </fieldset>
       @if (portionQuantity?.invalid && (portionQuantity?.dirty || portionQuantity?.touched)) {
         <div class="alert alert-danger">
-          @if (portionQuantity?.hasError('required')) { <div>La porción se requiere</div> }
-          @if (portionQuantity?.hasError('min')) { <div>La porción no puede ser negativa.</div> }
+          @if (portionQuantity?.hasError('required')) { <div class="invalid">La porción se requiere</div> }
+          @if (portionQuantity?.hasError('min')) { <div class="invalid">La porción no puede ser negativa.</div> }
         </div>
       }
     </div>
@@ -44,52 +41,53 @@
       </select>
       @if (category?.invalid && (category?.dirty || category?.touched)) {
         <div class="alert alert-danger">
-          @if (category?.hasError('required')) { <div>La categoría se requiere</div> }
+          @if (category?.hasError('required')) { <div class="invalid">La categoría se requiere</div> }
         </div>
       }
     </div>
     <div>
-      <label for="stockUnits">Disponible</label><input type="number" formControlName="stockUnits" id="stockUnits" /><span>Unidades</span>
+      <label for="stockUnits">Disponible</label><input type="number" formControlName="stockUnits" id="stockUnits" /><span class="unit">Unidades</span>
       @if (stockUnits?.invalid && (stockUnits?.dirty || stockUnits?.touched)) {
         <div class="alert alert-danger">
-          @if (stockUnits?.hasError('required')) { <div>Las unidades disponibles se requieren</div> }
-          @if (stockUnits?.hasError('min')) { <div>Las unidades disponibles no puedes ser negativas.</div> }
+          @if (stockUnits?.hasError('required')) { <div class="invalid">Las unidades disponibles se requieren</div> }
+          @if (stockUnits?.hasError('min')) { <div class="invalid">Las unidades disponibles no pueden ser negativas.</div> }
         </div>
       }
     </div>
     <div>
-      <label for="temperature_Celsius">Temperatura</label><input type="number" formControlName="temperature_Celsius" id="temperature_Celsius" /><span>°C</span>
+      <label for="temperature_Celsius">Temperatura</label><input type="number" formControlName="temperature_Celsius" id="temperature_Celsius" /><span class="unit">°C</span>
       @if (temperature_Celsius?.invalid && (temperature_Celsius?.dirty || temperature_Celsius?.touched)) {
         <div class="alert alert-danger">
-          @if (temperature_Celsius?.hasError('required')) { <div>La temperatura de servicio se requiere</div> }
-          @if (temperature_Celsius?.hasError('min')) { <div>LLa temperatura de servicio debe ser mayor o igual a -273 °C.</div> }
+          @if (temperature_Celsius?.hasError('required')) { <div class="invalid">La temperatura de servicio se requiere</div> }
+          @if (temperature_Celsius?.hasError('min')) { <div class="invalid">LLa temperatura de servicio debe ser mayor o igual a -273 °C.</div> }
         </div>
       }
     </div>
     <div>
-      <label for="preparation_min">Preparación</label><input type="number" formControlName="preparation_min" id="preparation_min" /><span>min</span>
+      <label for="preparation_min">Preparación</label><input type="number" formControlName="preparation_min" id="preparation_min" /><span class="unit">min</span>
       @if (preparation_min?.invalid && (preparation_min?.dirty || preparation_min?.touched)) {
         <div class="alert alert-danger">
-          @if (preparation_min?.hasError('required')) { <div>El tiempo de preparación se requiere</div> }
-          @if (preparation_min?.hasError('min')) { <div>El tiempo de preparación no puede ser negativo.</div> }
+          @if (preparation_min?.hasError('required')) { <div class="invalid">El tiempo de preparación se requiere</div> }
+          @if (preparation_min?.hasError('min')) { <div class="invalid">El tiempo de preparación no puede ser negativo.</div> }
         </div>
       }
     </div>
     <div>
-      <fieldset><legend>Aptitud</legend>
-        <div><input type="checkbox" formControlName="vegan_friendly" id="vegan_friendly" /><label for="vegan_friendly">Vegano</label></div>
-        <div><input type="checkbox" formControlName="underage_friendly" id="underage_friendly" /><label for="underage_friendly">Infantil</label></div>
-        <div><input type="checkbox" formControlName="celiac_friendly" id="celiac_friendly" /><label for="celiac_friendly">Celíaco</label></div>
+      <fieldset class="chip-group">
+        <legend>Aptitud</legend>
+        <span><input type="checkbox" formControlName="vegan_friendly" id="vegan_friendly" /><label for="vegan_friendly">Vegano</label></span>
+        <span><input type="checkbox" formControlName="underage_friendly" id="underage_friendly" /><label for="underage_friendly">Infantil</label></span>
+        <span><input type="checkbox" formControlName="celiac_friendly" id="celiac_friendly" /><label for="celiac_friendly">Celíaco</label></span>
       </fieldset>
     </div>
     <div>
       <label for="price_euros_cents">Precio</label>
       <input type="text" [value]="priceDisplayValue" (input)="onPriceInput($event)" id="price_euros_cents" />
-      <span>€</span>
+      <span class="unit">€</span>
       @if (price_euros_cents?.invalid && (price_euros_cents?.dirty || price_euros_cents?.touched)) {
         <div class="alert alert-danger">
-          @if (price_euros_cents?.hasError('required')) { <div>El precio se requiere</div> }
-          @if (price_euros_cents?.hasError('min')) { <div>El precio no puede ser negativo.</div> }
+          @if (price_euros_cents?.hasError('required')) { <div class="invalid">El precio se requiere</div> }
+          @if (price_euros_cents?.hasError('min')) { <div class="invalid">El precio no puede ser negativo.</div> }
         </div>
       }
     </div>

@@ -78,4 +78,13 @@ export class ArticlesService {
     // Assign new value
     (article as any)[property] = value;
   }
+
+	setArticle(newArticle: Article): void {
+		const existingArticleIndex = this.articles.findIndex(article => article.id === newArticle.id);
+		if (existingArticleIndex > -1) {
+			this.articles[existingArticleIndex] = newArticle;
+		} else {
+			this.articles.push(newArticle);
+		}
+	}
 }

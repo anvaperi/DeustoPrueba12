@@ -1,21 +1,11 @@
-<h1>app works!</h1>
+<h1>Gestor de artcículos</h1>
 <nav>
   <ul>
-    <li>
-      <a
-        routerLink="/form"
-        roouterLinkActive="active"
-        ariaCurrentWhenActive="page"
-      >Formulario
-      </a>
+    <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <a routerLink="/form" aria-current="page">Formulario</a>
     </li>
-    <li>
-      <a
-        routerLink="/table"
-        roouterLinkActive="active"
-        ariaCurrentWhenActive="page"
-      >Tabla
-      </a>
+    <li routerLinkActive="active">
+      <a routerLink="/table" aria-current="page">Tabla</a>
     </li>
   </ul>
 </nav>
